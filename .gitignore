@@ -29,10 +29,10 @@ pip-wheel-metadata/
 share/python-wheels/
 
 # Virtual environments
-venv/
-venv-*/
+.venv/
+.venv-*/
 ENV/
-env/
+.env/
 .env/
 .venv/
 env.bak/
@@ -143,3 +143,4 @@ node_modules/
 coverage/
 dist/
 project_description/
+TaskList.md
