@@ -41,7 +41,8 @@ class PortfolioEnv(gym.Env):
             if len(self.price_df.columns) != self.n_assets:
                 raise ValueError("price_df columns must match n_assets length")
 
-    def reset(self, seed: Optional[int] = None, return_info: bool = False, options: Optional[dict] = None):
+    def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
+        # Gymnasium-compatible reset signature: returns (obs, info)
         if seed is not None:
             np.random.seed(seed)
         self.current_step = 0
@@ -49,12 +50,12 @@ class PortfolioEnv(gym.Env):
         w = np.ones(self.n_assets, dtype=np.float32)
         w /= w.sum()
         self.current_weights = w
+        # initialize state based on price history (if available)
         self.state = np.zeros_like(self.state)
+        self._build_state()
         # reset step pointer for price series
         self.current_step = 0
-        if return_info:
-            return self.state, {"weights": self.current_weights.copy()}
-        return self.state
+        return self.state, {"weights": self.current_weights.copy()}
 
     def step(self, action):
         # clip and normalize action to yield allocation weights
@@ -89,7 +90,104 @@ class PortfolioEnv(gym.Env):
 
         self.current_weights = weights
         info = {"weights": weights, "turnover": turnover, "transaction_cost": trans_cost, "portfolio_return": portfolio_return}
-        return self.state, float(reward), bool(done), info
+        # advance observation/state to reflect new time index
+        # Gymnasium step signature: (obs, reward, terminated, truncated, info)
+        if not done:
+            # current_step already incremented when computing returns
+            self._build_state()
+        terminated = bool(done)
+        truncated = False
+        return self.state, float(reward), terminated, truncated, info
+
+    def _build_state(self):
+        """Populate `self.state` with per-asset and global features based on `self.current_step`.
+
+        Per-asset features (N x F): default F=5
+          - 1d return, 5d return, 20d return, 20d vol (std of daily rets), 20d momentum (mean)
+        Global features (G): mean 1d return, mean 20d vol, normalized step index
+        """
+        if self.price_df is None or len(self.price_df) == 0:
+            self.state[:] = 0.0
+            return
+
+        t = int(self.current_step)
+        prices = self.price_df.values.astype(float)
+        n_dates, n_assets = prices.shape
+
+        # helper to get price at index safely
+        def price_at(idx):
+            if idx < 0:
+                return np.full(n_assets, np.nan, dtype=float)
+            if idx >= n_dates:
+                return np.full(n_assets, np.nan, dtype=float)
+            return prices[idx]
+
+        p_t = price_at(t)
+        p_t_1 = price_at(t - 1)
+        p_t_5 = price_at(t - 5)
+        p_t_20 = price_at(t - 20)
+
+        # daily returns series up to t (for vol/momentum)
+        # compute returns for window up to last 20 days
+        start_idx = max(1, t - 20 + 1)
+        rets_window = []
+        for i in range(start_idx, t + 1):
+            prev = price_at(i - 1)
+            cur = price_at(i)
+            with np.errstate(divide='ignore', invalid='ignore'):
+                r = (cur / prev) - 1.0
+                r = np.nan_to_num(r, nan=0.0, posinf=0.0, neginf=0.0)
+            rets_window.append(r)
+        if len(rets_window) == 0:
+            rets_window = [np.zeros(n_assets, dtype=float)]
+        rets_window = np.vstack(rets_window)
+
+        # per-asset feature vector
+        feat_list = []
+        # 1d
+        with np.errstate(divide='ignore', invalid='ignore'):
+            one_d = (p_t / p_t_1) - 1.0
+        one_d = np.nan_to_num(one_d, nan=0.0, posinf=0.0, neginf=0.0)
+        feat_list.append(one_d)
+        # 5d
+        with np.errstate(divide='ignore', invalid='ignore'):
+            ret5 = (p_t / p_t_5) - 1.0
+        ret5 = np.nan_to_num(ret5, nan=0.0, posinf=0.0, neginf=0.0)
+        feat_list.append(ret5)
+        # 20d
+        with np.errstate(divide='ignore', invalid='ignore'):
+            ret20 = (p_t / p_t_20) - 1.0
+        ret20 = np.nan_to_num(ret20, nan=0.0, posinf=0.0, neginf=0.0)
+        feat_list.append(ret20)
+        # vol 20d (std over rets_window)
+        vol20 = np.std(rets_window, axis=0)
+        feat_list.append(vol20)
+        # momentum 20d (mean over window)
+        mom20 = np.mean(rets_window, axis=0)
+        feat_list.append(mom20)
+
+        per_asset_feats = np.stack(feat_list, axis=1)  # shape (n_assets, F)
+
+        # global features
+        mean_1d = np.nan_to_num(np.mean(one_d), nan=0.0)
+        mean_vol20 = np.nan_to_num(np.mean(vol20), nan=0.0)
+        norm_step = float(t) / max(1, n_dates - 1)
+        global_feats = np.array([mean_1d, mean_vol20, norm_step], dtype=float)
+
+        # flatten into state vector: per-asset flattened first, then global
+        flat = np.concatenate([per_asset_feats.ravel(), global_feats])
+        # ensure expected size
+        if flat.size != self.state.size:
+            # if sizes mismatch due to config, resize or pad/truncate
+            s = self.state.size
+            if flat.size < s:
+                tmp = np.zeros(s, dtype=float)
+                tmp[:flat.size] = flat
+                flat = tmp
+            else:
+                flat = flat[:s]
+
+        self.state = flat.astype(np.float32)
 
     def _normalize_action(self, raw: np.ndarray) -> np.ndarray:
         s = float(raw.sum())

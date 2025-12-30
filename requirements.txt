@@ -3,4 +3,7 @@ numpy>=1.21
 yfinance>=0.2.4
 openpyxl>=3.0
 pytest>=7.0
+stable-baselines3>=1.8.0
 gym>=0.21.0
+shimmy>=2.0
+gymnasium
