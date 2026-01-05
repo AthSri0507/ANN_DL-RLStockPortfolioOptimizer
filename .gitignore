@@ -63,6 +63,7 @@ coverage.xml
 .pyre/
 
 # Pytest
+tests/
 .pytest_cache/
 test_*.py
 
@@ -144,3 +145,8 @@ coverage/
 dist/
 project_description/
 TaskList.md
+simulations/
+scripts/calibrate_gbm.py
+eval.py
+evaluate.py
+
