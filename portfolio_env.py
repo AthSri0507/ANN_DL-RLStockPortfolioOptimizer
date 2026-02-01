@@ -93,7 +93,7 @@ class PortfolioEnv(gym.Env):
         self.action_smoothing = action_smoothing
         self._smoothed_weights = None  # Initialized on reset
         
-        # Patch 5: Reward scaling to keep rewards in consistent magnitude
+        
         # Soft scaling (not clipping) to preserve learning signal
         self.reward_scale = reward_scale
 
@@ -165,7 +165,7 @@ class PortfolioEnv(gym.Env):
         raw = np.clip(action, 0.0, None)
         target_weights = self._normalize_action(raw)
         
-        # Patch 4: Action smoothing (EMA) to reduce high-frequency weight noise
+        
         # This reduces turnover from noisy policy outputs while preserving PPO exploration
         if self.action_smoothing > 0 and self._smoothed_weights is not None:
             # EMA: smoothed = alpha * previous + (1 - alpha) * target
@@ -179,7 +179,7 @@ class PortfolioEnv(gym.Env):
         turnover = np.sum(np.abs(weights - self.current_weights))
         trans_cost = self.transaction_cost * turnover
         
-        # Patch 6: Explicit turnover penalty (quadratic) to reduce noisy reallocations
+        
         # This is separate from transaction cost and penalizes large weight changes
         turnover_pen = self.turnover_penalty * (turnover ** 2)
 
@@ -225,7 +225,7 @@ class PortfolioEnv(gym.Env):
         # reward_alpha acts as risk aversion (lambda)
         raw_reward = portfolio_return - self.reward_alpha * (effective_vol ** 2) - trans_cost - turnover_pen - cvar_penalty
         
-        # Patch 5: Soft reward scaling to keep magnitude consistent
+        
         # Uses tanh-based scaling to bound extreme rewards without hard clipping
         # This preserves the learning signal while preventing value function instability
         if self.reward_scale != 1.0:

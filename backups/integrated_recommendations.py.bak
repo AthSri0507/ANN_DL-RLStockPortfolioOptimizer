@@ -136,16 +136,15 @@ class IntegratedRecommendations:
     
     def generate_report(self) -> str:
         """Generate a human-readable report."""
-        from currency import format_amount
         lines = [
             "=" * 80,
             "INTEGRATED PORTFOLIO RECOMMENDATIONS",
             "Combining RL Optimization with Asset Signal Analysis",
             "=" * 80,
             "",
-            f"Total Capital:      {format_amount(self.capital_config.total_capital):>14}",
-            f"Reserved Cash:      {format_amount(self.capital_config.reserved_cash):>14}",
-            f"Investable Capital: {format_amount(self.capital_config.investable_capital):>14}",
+            f"Total Capital:      ${self.capital_config.total_capital:>12,.2f}",
+            f"Reserved Cash:      ${self.capital_config.reserved_cash:>12,.2f}",
+            f"Investable Capital: ${self.capital_config.investable_capital:>12,.2f}",
             "",
         ]
         
@@ -160,9 +159,9 @@ class IntegratedRecommendations:
             for rec in buys:
                 lines.extend([
                     f"\n  #{rec.rank} {rec.ticker} — {rec.confidence} Confidence",
-                    f"     Action: BUY {format_amount(rec.delta_value)} ({rec.delta_weight:+.2%} weight)",
-                    f"     Current: {format_amount(rec.current_value)} ({rec.current_weight:.2%}) → "
-                    f"Target: {format_amount(rec.target_value)} ({rec.target_weight:.2%})",
+                    f"     Action: BUY ${rec.delta_value:,.2f} ({rec.delta_weight:+.2%} weight)",
+                    f"     Current: ${rec.current_value:,.2f} ({rec.current_weight:.2%}) → "
+                    f"Target: ${rec.target_value:,.2f} ({rec.target_weight:.2%})",
                     f"     Signal Score: {rec.signal_score:+.3f} ({rec.signal_recommendation})",
                     f"     Rationale: {rec.rationale}",
                 ])
@@ -179,9 +178,9 @@ class IntegratedRecommendations:
             for rec in sells:
                 lines.extend([
                     f"\n  #{rec.rank} {rec.ticker} — {rec.confidence} Confidence",
-                    f"     Action: SELL {format_amount(abs(rec.delta_value))} ({rec.delta_weight:+.2%} weight)",
-                    f"     Current: {format_amount(rec.current_value)} ({rec.current_weight:.2%}) → "
-                    f"Target: {format_amount(rec.target_value)} ({rec.target_weight:.2%})",
+                    f"     Action: SELL ${abs(rec.delta_value):,.2f} ({rec.delta_weight:+.2%} weight)",
+                    f"     Current: ${rec.current_value:,.2f} ({rec.current_weight:.2%}) → "
+                    f"Target: ${rec.target_value:,.2f} ({rec.target_weight:.2%})",
                     f"     Signal Score: {rec.signal_score:+.3f} ({rec.signal_recommendation})",
                     f"     Rationale: {rec.rationale}",
                 ])
@@ -197,7 +196,7 @@ class IntegratedRecommendations:
             ])
             for rec in holds:
                 lines.append(
-                    f"  {rec.ticker}: {format_amount(rec.current_value)} ({rec.current_weight:.2%}) "
+                    f"  {rec.ticker}: ${rec.current_value:,.2f} ({rec.current_weight:.2%}) "
                     f"— Signal: {rec.signal_score:+.3f}"
                 )
             lines.append("")
@@ -637,9 +636,9 @@ def main():
     
     print(f"Generating integrated recommendations...")
     print(f"  Price data: {args.price_csv} ({len(price_df)} rows, {len(price_df.columns)} assets)")
-    print(f"  Total capital: ?{capital_config.total_capital:,.2f}")
-    print(f"  Reserved cash: ?{capital_config.reserved_cash:,.2f}")
-    print(f"  Investable: ?{capital_config.investable_capital:,.2f}")
+    print(f"  Total capital: ${capital_config.total_capital:,.2f}")
+    print(f"  Reserved cash: ${capital_config.reserved_cash:,.2f}")
+    print(f"  Investable: ${capital_config.investable_capital:,.2f}")
     print()
     
     # Generate recommendations

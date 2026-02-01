@@ -184,14 +184,14 @@ class HoldingsEvaluation:
             "",
             "CAPITAL SUMMARY",
             "-" * 40,
-            f"  Total Capital:       ?{self.capital_config.total_capital:>15,.2f}",
-            f"  Reserved Cash:       ?{self.capital_config.reserved_cash:>15,.2f}",
-            f"  Investable Capital:  ?{self.capital_config.investable_capital:>15,.2f}",
+            f"  Total Capital:       ${self.capital_config.total_capital:>15,.2f}",
+            f"  Reserved Cash:       ${self.capital_config.reserved_cash:>15,.2f}",
+            f"  Investable Capital:  ${self.capital_config.investable_capital:>15,.2f}",
             "",
             "HOLDINGS SUMMARY",
             "-" * 40,
-            f"  Total Holdings Value: ?{self.total_holdings_value:>14,.2f}",
-            f"  Uninvested Cash:      ?{self.uninvested_cash:>14,.2f}",
+            f"  Total Holdings Value: ${self.total_holdings_value:>14,.2f}",
+            f"  Uninvested Cash:      ${self.uninvested_cash:>14,.2f}",
             f"  Investment Ratio:     {self.investment_ratio:>14.1%}",
             "",
             "POSITIONS",
@@ -204,8 +204,8 @@ class HoldingsEvaluation:
             lines.append(
                 f"{ticker:<10} "
                 f"{self.quantities[i]:>10.2f} "
-                f"?{self.prices.get(ticker, 0):>11,.2f} "
-                f"?{self.current_values[i]:>13,.2f} "
+                f"${self.prices.get(ticker, 0):>11,.2f} "
+                f"${self.current_values[i]:>13,.2f} "
                 f"{self.current_weights[i]:>9.1%}"
             )
         
@@ -214,7 +214,7 @@ class HoldingsEvaluation:
             f"{'TOTAL':<10} "
             f"{'':>10} "
             f"{'':>12} "
-            f"?{self.total_holdings_value:>13,.2f} "
+            f"${self.total_holdings_value:>13,.2f} "
             f"{sum(self.current_weights):>9.1%}"
         )
         
@@ -465,9 +465,9 @@ def main():
     capital_config = parse_capital_config(args.total_capital, args.reserved_cash)
     
     print(f"Capital Configuration:")
-    print(f"  Total Capital:      ?{capital_config.total_capital:,.2f}")
-    print(f"  Reserved Cash:      ?{capital_config.reserved_cash:,.2f}")
-    print(f"  Investable Capital: ?{capital_config.investable_capital:,.2f}")
+    print(f"  Total Capital:      ${capital_config.total_capital:,.2f}")
+    print(f"  Reserved Cash:      ${capital_config.reserved_cash:,.2f}")
+    print(f"  Investable Capital: ${capital_config.investable_capital:,.2f}")
     print()
     
     # Load holdings or create sample
@@ -501,7 +501,7 @@ def main():
     print("\nCurrent Prices:")
     for t, p in prices.items():
         if t in tickers:
-            print(f"  {t}: ?{p:,.2f}")
+            print(f"  {t}: ${p:,.2f}")
     print()
     
     # Get optimized weights

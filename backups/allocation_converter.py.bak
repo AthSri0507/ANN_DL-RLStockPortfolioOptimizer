@@ -11,7 +11,6 @@ import pandas as pd
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Union
 from input_parser import CapitalConfig
-from currency import format_amount, SYMBOL
 
 
 @dataclass
@@ -56,17 +55,17 @@ class AllocationResult:
         lines = [
             f"Portfolio Allocation Summary",
             f"=" * 40,
-            f"Total Capital:      {format_amount(self.capital_config.total_capital):>14}",
-            f"Reserved Cash:      {format_amount(self.capital_config.reserved_cash):>14}",
-            f"Investable Capital: {format_amount(self.investable_capital):>14}",
+            f"Total Capital:      ${self.capital_config.total_capital:>12,.2f}",
+            f"Reserved Cash:      ${self.capital_config.reserved_cash:>12,.2f}",
+            f"Investable Capital: ${self.investable_capital:>12,.2f}",
             f"",
             f"{'Ticker':<10} {'Weight':>10} {'Allocation':>15}",
             f"-" * 40,
         ]
         for ticker, weight, alloc in zip(self.tickers, self.weights, self.allocations):
-            lines.append(f"{ticker:<10} {weight:>10.2%} {format_amount(alloc):>14}")
+            lines.append(f"{ticker:<10} {weight:>10.2%} ${alloc:>14,.2f}")
         lines.append(f"-" * 40)
-        lines.append(f"{ 'Total':<10} {np.sum(self.weights):>10.2%} {format_amount(np.sum(self.allocations)):>14}")
+        lines.append(f"{'Total':<10} {np.sum(self.weights):>10.2%} ${np.sum(self.allocations):>14,.2f}")
         return "\n".join(lines)
 
 
@@ -198,9 +197,9 @@ class PortfolioComparison:
         lines = [
             f"Portfolio Comparison",
             f"=" * 70,
-            f"Investable Capital: {format_amount(self.capital_config.investable_capital)}",
+            f"Investable Capital: ${self.capital_config.investable_capital:,.2f}",
             f"",
-            f"{ 'Ticker':<8} {'Curr Wt':>8} {'Opt Wt':>8} {'Δ Wt':>8} {'Curr':>12} {'Opt':>12} {'Δ':>12}",
+            f"{'Ticker':<8} {'Curr Wt':>8} {'Opt Wt':>8} {'Δ Wt':>8} {'Curr $':>12} {'Opt $':>12} {'Δ $':>12}",
             f"-" * 70,
         ]
         for i, ticker in enumerate(self.tickers):
@@ -209,21 +208,21 @@ class PortfolioComparison:
                 f"{self.current_weights[i]:>7.1%} "
                 f"{self.optimized_weights[i]:>7.1%} "
                 f"{self.weight_deltas[i]:>+7.1%} "
-                f"{format_amount(self.current_allocations[i]):>11} "
-                f"{format_amount(self.optimized_allocations[i]):>11} "
-                f"{format_amount(self.allocation_deltas[i]):>+11}"
+                f"${self.current_allocations[i]:>11,.0f} "
+                f"${self.optimized_allocations[i]:>11,.0f} "
+                f"${self.allocation_deltas[i]:>+11,.0f}"
             )
         lines.append(f"-" * 70)
         
         # Totals
         lines.append(
-            f"{ 'Total':<8} "
+            f"{'Total':<8} "
             f"{np.sum(self.current_weights):>7.1%} "
             f"{np.sum(self.optimized_weights):>7.1%} "
             f"{'':>8} "
-            f"{format_amount(np.sum(self.current_allocations)):>11} "
-            f"{format_amount(np.sum(self.optimized_allocations)):>11} "
-            f"{format_amount(np.sum(self.allocation_deltas)):>+11}"
+            f"${np.sum(self.current_allocations):>11,.0f} "
+            f"${np.sum(self.optimized_allocations):>11,.0f} "
+            f"${np.sum(self.allocation_deltas):>+11,.0f}"
         )
         return "\n".join(lines)
     
@@ -363,9 +362,9 @@ if __name__ == "__main__":
     )
     
     print(f"Capital Configuration:")
-    print(f"  Total Capital:      ?{capital.total_capital:,.2f}")
-    print(f"  Reserved Cash:      ?{capital.reserved_cash:,.2f}")
-    print(f"  Investable Capital: ?{capital.investable_capital:,.2f}")
+    print(f"  Total Capital:      ${capital.total_capital:,.2f}")
+    print(f"  Reserved Cash:      ${capital.reserved_cash:,.2f}")
+    print(f"  Investable Capital: ${capital.investable_capital:,.2f}")
     print()
     
     # Convert weights to allocations

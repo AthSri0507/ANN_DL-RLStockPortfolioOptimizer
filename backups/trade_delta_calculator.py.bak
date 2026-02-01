@@ -141,15 +141,15 @@ class TradeDeltas:
             "TRADE RECOMMENDATIONS",
             "=" * 70,
             f"Transaction Cost Rate: {self.transaction_cost_rate:.2%}",
-            f"Min Trade Value:       ?{self.min_trade_value:,.2f}",
+            f"Min Trade Value:       ${self.min_trade_value:,.2f}",
             f"Min Trade Percent:     {self.min_trade_pct:.2%}",
             "",
             "SUMMARY",
             "-" * 40,
-            f"  Total Buys:           ?{self.total_buys:>12,.2f}",
-            f"  Total Sells:          ?{self.total_sells:>12,.2f}",
-            f"  Net Cash Flow:        ?{self.net_cash_flow:>+12,.2f}",
-            f"  Transaction Costs:    ?{self.total_transaction_costs:>12,.2f}",
+            f"  Total Buys:           ${self.total_buys:>12,.2f}",
+            f"  Total Sells:          ${self.total_sells:>12,.2f}",
+            f"  Net Cash Flow:        ${self.net_cash_flow:>+12,.2f}",
+            f"  Transaction Costs:    ${self.total_transaction_costs:>12,.2f}",
             f"  Active Trades:        {len(self.active_trades):>12}",
             f"  Filtered Trades:      {len(self.filtered_trades):>12}",
             f"  Cash Feasible:        {'Yes' if self.is_cash_feasible else 'NO - EXCEEDS RESERVE':>12}",
@@ -166,10 +166,10 @@ class TradeDeltas:
             for t in self.buy_trades:
                 lines.append(
                     f"{t.ticker:<8} "
-                    f"?{t.current_value:>11,.0f} "
-                    f"?{t.target_value:>11,.0f} "
-                    f"?{t.delta_value:>+11,.0f} "
-                    f"?{t.transaction_cost:>9,.2f}"
+                    f"${t.current_value:>11,.0f} "
+                    f"${t.target_value:>11,.0f} "
+                    f"${t.delta_value:>+11,.0f} "
+                    f"${t.transaction_cost:>9,.2f}"
                 )
             lines.append("")
         
@@ -183,10 +183,10 @@ class TradeDeltas:
             for t in self.sell_trades:
                 lines.append(
                     f"{t.ticker:<8} "
-                    f"?{t.current_value:>11,.0f} "
-                    f"?{t.target_value:>11,.0f} "
-                    f"?{t.delta_value:>+11,.0f} "
-                    f"?{t.transaction_cost:>9,.2f}"
+                    f"${t.current_value:>11,.0f} "
+                    f"${t.target_value:>11,.0f} "
+                    f"${t.delta_value:>+11,.0f} "
+                    f"${t.transaction_cost:>9,.2f}"
                 )
             lines.append("")
         
@@ -196,7 +196,7 @@ class TradeDeltas:
                 "-" * 70,
             ])
             for t in self.filtered_trades:
-                lines.append(f"  {t.ticker}: ?{t.delta_value:+,.0f} - {t.filter_reason}")
+                lines.append(f"  {t.ticker}: ${t.delta_value:+,.0f} - {t.filter_reason}")
         
         return "\n".join(lines)
 
@@ -270,7 +270,7 @@ def compute_trade_deltas(
         if action != TradeAction.HOLD:
             if abs_delta < min_trade_value:
                 is_filtered = True
-                filter_reason = f"Below min value ?{min_trade_value:.0f}"
+                filter_reason = f"Below min value ${min_trade_value:.0f}"
             elif abs_delta < min_pct_value:
                 is_filtered = True
                 filter_reason = f"Below min pct {min_trade_pct:.1%}"
@@ -600,8 +600,8 @@ if __name__ == "__main__":
     
     prices = {"AAPL": 150, "MSFT": 300, "GOOGL": 140, "AMZN": 180, "META": 350}
     
-    print(f"Capital: ?{capital.total_capital:,.0f} (Reserved: ?{capital.reserved_cash:,.0f})")
-    print(f"Investable: ?{capital.investable_capital:,.0f}")
+    print(f"Capital: ${capital.total_capital:,.0f} (Reserved: ${capital.reserved_cash:,.0f})")
+    print(f"Investable: ${capital.investable_capital:,.0f}")
     print()
     
     deltas = compute_trade_deltas_from_weights(

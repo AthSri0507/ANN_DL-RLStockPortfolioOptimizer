@@ -197,19 +197,17 @@ if __name__ == "__main__":
     # Parse capital config if provided
     if args.total_capital is not None:
         capital = parse_capital_config(args.total_capital, args.reserved_cash)
-        from currency import format_amount
         print(f"\nCapital Configuration:")
-        print(f"  Total Capital:      {format_amount(capital.total_capital)}")
-        print(f"  Reserved Cash:      {format_amount(capital.reserved_cash)}")
-        print(f"  Investable Capital: {format_amount(capital.investable_capital)}")
+        print(f"  Total Capital:      ${capital.total_capital:,.2f}")
+        print(f"  Reserved Cash:      ${capital.reserved_cash:,.2f}")
+        print(f"  Investable Capital: ${capital.investable_capital:,.2f}")
         print(f"  Reserve Ratio:      {capital.reserve_ratio:.1%}")
     else:
         # Try to read capital from Excel file
         capital = parse_capital_from_excel(args.path)
         if capital:
-            from currency import format_amount
             print(f"\nCapital Configuration (from Excel):")
-            print(f"  Total Capital:      {format_amount(capital.total_capital)}")
-            print(f"  Reserved Cash:      {format_amount(capital.reserved_cash)}")
-            print(f"  Investable Capital: {format_amount(capital.investable_capital)}")
+            print(f"  Total Capital:      ${capital.total_capital:,.2f}")
+            print(f"  Reserved Cash:      ${capital.reserved_cash:,.2f}")
+            print(f"  Investable Capital: ${capital.investable_capital:,.2f}")
 

@@ -41,7 +41,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from simulate_gbm import estimate_stats_and_corr, chol_with_jitter, simulate_paths
-from currency import format_amount, SYMBOL
 
 
 @dataclass
@@ -170,9 +169,9 @@ class PortfolioComparison:
             "-" * 80,
             "CURRENT PORTFOLIO",
             "-" * 80,
-            f"  Initial Value:        {format_amount(self.current.initial_value):>14}",
-            f"  Mean Terminal Value:  {format_amount(self.current.mean_terminal_value):>14}",
-            f"  Std Terminal Value:   {format_amount(self.current.std_terminal_value):>14}",
+            f"  Initial Value:        ${self.current.initial_value:>12,.2f}",
+            f"  Mean Terminal Value:  ${self.current.mean_terminal_value:>12,.2f}",
+            f"  Std Terminal Value:   ${self.current.std_terminal_value:>12,.2f}",
             f"  Mean Return:          {self.current.mean_return:>12.2%}",
             f"  Std Return:           {self.current.std_return:>12.2%}",
             f"  VaR (95%):            {self.current.var_95:>12.2%}",
@@ -190,9 +189,9 @@ class PortfolioComparison:
             "-" * 80,
             "OPTIMIZED PORTFOLIO (RL)",
             "-" * 80,
-            f"  Initial Value:        {format_amount(self.optimized.initial_value):>14}",
-            f"  Mean Terminal Value:  {format_amount(self.optimized.mean_terminal_value):>14}",
-            f"  Std Terminal Value:   {format_amount(self.optimized.std_terminal_value):>14}",
+            f"  Initial Value:        ${self.optimized.initial_value:>12,.2f}",
+            f"  Mean Terminal Value:  ${self.optimized.mean_terminal_value:>12,.2f}",
+            f"  Std Terminal Value:   ${self.optimized.std_terminal_value:>12,.2f}",
             f"  Mean Return:          {self.optimized.mean_return:>12.2%}",
             f"  Std Return:           {self.optimized.std_return:>12.2%}",
             f"  VaR (95%):            {self.optimized.var_95:>12.2%}",
@@ -587,7 +586,7 @@ def main():
     
     print(f"Running Monte Carlo comparison...")
     print(f"  Price data: {args.price_csv} ({len(price_df)} rows, {len(price_df.columns)} assets)")
-    print(f"  Initial capital: ?{args.total_capital:,.2f}")
+    print(f"  Initial capital: ${args.total_capital:,.2f}")
     print(f"  Simulation: {args.n_paths} paths × {args.n_steps} steps")
     print(f"  Noise distribution: {args.noise_dist}")
     print()
