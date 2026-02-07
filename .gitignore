@@ -153,3 +153,4 @@ run_test.py
 *.png
 app.py
 inspect_zip.py
+!docs/images/*.png

@@ -1,4 +1,4 @@
-# AnNDL: Reinforcement Learning Portfolio Optimizer
+# Reinforcement Learning Portfolio Optimizer
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square)](https://www.python.org/downloads/)
 [![Stable Baselines3](https://img.shields.io/badge/stable--baselines3-1.8.0%2B-brightgreen?style=flat-square)](https://stable-baselines3.readthedocs.io/)
@@ -8,7 +8,7 @@ An end-to-end reinforcement learning framework for intelligent portfolio allocat
 
 ## Overview
 
-AnNDL combines modern reinforcement learning with quantitative finance to help investors make data-driven portfolio decisions. The system ingests portfolio data, trains PPO agents to optimize risk-adjusted returns, simulates multiple market scenarios via Monte Carlo methods, and provides actionable allocation recommendations compared to baseline strategies.
+ Reinforcement Learning Portfolio Optimizer combines modern reinforcement learning with quantitative finance to help investors make data-driven portfolio decisions. The system ingests portfolio data, trains PPO agents to optimize risk-adjusted returns, simulates multiple market scenarios via Monte Carlo methods, and provides actionable allocation recommendations compared to baseline strategies.
 
 ### Key Capabilities
 
@@ -133,7 +133,9 @@ The framework supports:
 - **Cross-market testing**: Compare equal-weight, market-cap-weighted, and RL-optimized allocations
 - **Robust inference**: Ensemble predictions with smoothing, capping, and temperature adjustment
 
+## Project Structure
 
+```
 anndl/
 ├── app_robust.py                   # Robust Streamlit dashboard
 ├── train_agent.py                  # RL training harness (PPO/SAC)
@@ -142,7 +144,7 @@ anndl/
 ├── data_fetcher.py                 # Yahoo Finance price retrieval
 ├── input_parser.py                 # Excel portfolio parser
 ├── currency.py                     # Multi-currency support
-├── allocation_converter.py         # Weight <-> quantity conversion
+├── allocation_converter.py          # Weight <-> quantity conversion
 ├── features.py                     # Feature engineering
 ├── global_features.py              # Global portfolio features
 │
@@ -160,7 +162,7 @@ anndl/
 │   ├── test_book.ipynb             # Testing & validation
 │   └── ...
 │
-├── tests/                          # tests to make sure modules are functional
+├── tests/                          # Unit tests
 ├── docs/                           # Documentation & images
 └── requirements.txt                # Python dependencies
 ```
@@ -260,14 +262,18 @@ model = PPO.load("agent_model")
 
 The Streamlit dashboard provides an intuitive interface for portfolio optimization:
 
-![Dashboard Overview](docs/images/img1.svg)
-*User Portfolio Configuration and Budget Constraint*
+![Portfolio Performance Analysis](docs/images/im4.png)
+*Portfolio setup interface for uploading holdings, setting constraints, and configuring optimization parameters*
 
-![Analysis Tools](docs/images/img2.svg)
-*Rl Predicted buy and sell recommendation based on user stock and budget*
+![Strategy Recommendations](docs/images/im3.png)
+*AI-generated asset allocation recommendations and rebalancing guidance*
 
-![Recommendations](docs/images/img3.svg)
-*Monte carlo based Fan-Charts for current vs optimized portfolio*
+![Market Simulation Results](docs/images/im2.png)
+*Monte Carlo simulation fan charts showing projected portfolio paths and tail risk estimates*
+
+![Portfolio Input & Configuration](docs/images/im1.png)
+*Buy and sell Recommendation per assest along with number of share and rationale keeping user assest and budget in mind.*
+
 
 ## Configuration & Customization
 
