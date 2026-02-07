@@ -73,7 +73,7 @@ dmypy.json
 
 # Jupyter Notebook
 .ipynb_checkpoints
-*.ipynb
+demo*.ipynb
 # Uncomment to ignore notebooks' outputs only:
 # **/.ipynb_checkpoints/*
 # **/*.ipynb
@@ -150,3 +150,6 @@ scripts/calibrate_gbm.py
 eval.py
 evaluate.py
 run_test.py
+*.png
+app.py
+inspect_zip.py
